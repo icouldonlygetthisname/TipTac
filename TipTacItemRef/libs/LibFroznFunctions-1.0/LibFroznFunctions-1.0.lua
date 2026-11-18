@@ -9,7 +9,7 @@
 
 -- create new library
 local LIB_NAME = "LibFroznFunctions-1.0";
-local LIB_MINOR = 68; -- bump on changes
+local LIB_MINOR = 69; -- bump on changes
 
 if (not LibStub) then
 	error(LIB_NAME .. " requires LibStub.");
@@ -4180,7 +4180,12 @@ function LibFroznFunctions:CreateUnitRecord(unitID)
 	unitRecord.isNPC = (not unitRecord.isPlayer) and (not unitRecord.isPet) and (not unitRecord.isBattlePet);
 	
 	local name, normalizedForeignRealmName = UnitName(unitID);
-	
+
+	-- Local fix: with regional unique names (WoW Forever) UnitName() returns ("First Surname", "Surname"). The 2nd value is the surname, not a realm, and the name already contains it.
+	if (RegionalUniqueNamesEnabled) and (RegionalUniqueNamesEnabled()) then
+		normalizedForeignRealmName = nil;
+	end
+
 	unitRecord.name = name;
 	unitRecord.nameWithForeignRealmSuffix = GetUnitName(unitID);
 	unitRecord.nameWithNormalizedForeignRealmName = GetUnitName(unitID, true);
